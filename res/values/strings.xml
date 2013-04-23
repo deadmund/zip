@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="app_name">zip</string>
+    <string name="hello_world">Zip!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_zip_menu">Zip</string>
+    <string name="freestyle">freestyle</string>
+
+</resources>
