@@ -1,8 +1,5 @@
 package net.ednovak.zip;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -25,7 +22,6 @@ public class Freestyle extends Activity implements Runnable{
 	private AudioTrack audioTrack;
 	private final int sampleRate = 8000;
 	private boolean fingerDown;
-	private double lastValue; 
 	private int ATBufferSize;
 	private byte[] myBuffer;
 	
@@ -44,7 +40,7 @@ public class Freestyle extends Activity implements Runnable{
 		
 		//requestWindowFeature(Window.FEATURE_NO_TITLE);
 		//getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		
+		changeTone(100, 200);
 
 	}
 	
