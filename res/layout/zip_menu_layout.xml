@@ -2,21 +2,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+	android:gravity="center"
     android:orientation="vertical" >
 
     <TextView android:id="@+id/zip_text"
+        android:textSize="30sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_alignLeft="@+id/tuner"
+    	android:layout_alignRight="@+id/freestyle"
+    	android:gravity="center"
+    	android:layout_margin="20dp"
         android:text="@string/hello_world"
         tools:context=".ZipMenu" />
     
-    <Button android:id="@+id/freestyle"
-        android:layout_width="wrap_content"
+    <Button android:id="@+id/tuner"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/zip_text"
+        android:layout_centerInParent="true"
+        android:text="@string/tuner" />
+
+    <Button android:id="@+id/freestyle"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/zip_text"
+        android:layout_centerInParent="true"
+        android:layout_toRightOf="@id/tuner"
         android:text="@string/freestyle" />
-        
 
 </RelativeLayout>

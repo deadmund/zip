@@ -21,6 +21,13 @@ public class ZipMenu extends Activity {
         		startActivity(new Intent(v.getContext(), Freestyle.class));
         	}
         });
+        
+        Button tuner_butt = (Button) findViewById(R.id.tuner);
+        tuner_butt.setOnClickListener(new OnClickListener() {
+        	public void onClick(View v){
+        		startActivity(new Intent(v.getContext(), Tuner.class));
+        	}
+        });
         //getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
