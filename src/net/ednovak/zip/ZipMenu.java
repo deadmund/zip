@@ -28,6 +28,7 @@ public class ZipMenu extends Activity {
         		startActivity(new Intent(v.getContext(), Tuner.class));
         	}
         });
+        
         //getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

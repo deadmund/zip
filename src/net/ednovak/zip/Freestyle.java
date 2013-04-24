@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.Window;
+import android.view.WindowManager;
 
 public class Freestyle extends Activity implements Runnable{
 	
@@ -29,6 +31,8 @@ public class Freestyle extends Activity implements Runnable{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	    SV = new ZipSurfaceView(this);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(SV);
 		
 		ATBufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_CONFIGURATION_MONO, AudioFormat.ENCODING_PCM_16BIT);
@@ -38,8 +42,6 @@ public class Freestyle extends Activity implements Runnable{
 				 AudioFormat.ENCODING_PCM_16BIT, ATBufferSize,
 				 AudioTrack.MODE_STREAM);
 		
-		//requestWindowFeature(Window.FEATURE_NO_TITLE);
-		//getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		changeTone(100, 200);
 
 	}

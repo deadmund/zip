@@ -16,6 +16,7 @@
         <item>G</item>
     </string-array>
     <string name="stop">Stop</string>
-    <string name="play">Play</string>    
+    <string name="play">Play</string>
+    <string name="hz">Hz</string>
 
 </resources>
