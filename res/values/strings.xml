@@ -15,6 +15,7 @@
         <item>F</item>
         <item>G</item>
     </string-array>
-        
+    <string name="stop">Stop</string>
+    <string name="play">Play</string>    
 
 </resources>
