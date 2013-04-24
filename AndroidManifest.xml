@@ -23,7 +23,8 @@
                 android:value="a" />
         </activity>
         
-        <activity android:name=".Freestyle" />
+        <activity android:name=".Freestyle" 
+            android:screenOrientation="portrait"/>
         <activity android:name=".Tuner" />
     </application>
 

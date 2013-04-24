@@ -81,7 +81,6 @@ public class Freestyle extends Activity implements Runnable{
 		audioTrack.pause();
 		audioTrack.flush();
 		audioTrack.stop();
-		//audioTrack.stop();
 	}
 	
 	
@@ -114,7 +113,7 @@ public class Freestyle extends Activity implements Runnable{
 		}
 		
 		public void onPauseSV(){
-
+			fingerDown = false;
 		}
 		
 		
