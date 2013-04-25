@@ -5,9 +5,9 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -49,6 +49,7 @@ public class Tuner extends Activity implements Runnable{
 		});
 		
 		freq_text = (EditText)findViewById(R.id.freq);
+		Log.d("tuner:onCreate", "Just testing");
 		
 		ToggleButton play_butt = (ToggleButton) findViewById(R.id.play_stop);
 		play_butt.setOnClickListener(new OnClickListener(){

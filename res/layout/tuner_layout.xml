@@ -6,11 +6,13 @@
     <Spinner android:id="@+id/note"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
+        android:layout_margin="5dp"
         android:layout_alignParentLeft="true"/>
     
     <EditText android:id="@+id/freq"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:layout_toRightOf="@id/note"
         android:layout_toLeftOf="@+id/hz"
         android:inputType="numberDecimal"

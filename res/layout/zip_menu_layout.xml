@@ -3,17 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 	android:gravity="center"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:background="@drawable/gradient" >
 
     <TextView android:id="@+id/zip_text"
         android:textSize="30sp"
+        android:textColor="#FFFFFF"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignLeft="@+id/tuner"
     	android:layout_alignRight="@+id/freestyle"
     	android:gravity="center"
-    	android:layout_margin="20dp"
+    	android:layout_margin="30dp"
         android:text="@string/hello_world"
         tools:context=".ZipMenu" />
     
