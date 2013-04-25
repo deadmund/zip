@@ -13,13 +13,15 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class Tuner extends Activity implements Runnable{
 	
 	private Spinner notes_spin;
 	private EditText freq_text;
-	private final int sampleRate = 44100;
+	private ToggleButton play_butt;
+	private final int sampleRate = 8000;
 	private double curFreq;
 	private boolean playing = false;
 	private AudioTrack audioTrack;
@@ -51,7 +53,7 @@ public class Tuner extends Activity implements Runnable{
 		freq_text = (EditText)findViewById(R.id.freq);
 		Log.d("tuner:onCreate", "Just testing");
 		
-		ToggleButton play_butt = (ToggleButton) findViewById(R.id.play_stop);
+		play_butt = (ToggleButton) findViewById(R.id.play_stop);
 		play_butt.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v){
@@ -66,6 +68,7 @@ public class Tuner extends Activity implements Runnable{
 					catch(NumberFormatException e){
 						e.printStackTrace();
 					}
+					checkFreq();
 					playing = true;
 					playTone();
 				}
@@ -118,17 +121,30 @@ public class Tuner extends Activity implements Runnable{
 		 return freq;
 	}
 	
+	
+	private void checkFreq(){
+		double maxFreq = (double)sampleRate / 2.0;
+		if (curFreq > maxFreq){
+			Toast.makeText(this, "Maximum frequency allowed: " + String.valueOf(maxFreq), Toast.LENGTH_LONG).show();
+			freq_text.setText("440");
+			curFreq = 440;
+		}
+		if(curFreq < 10){
+			Toast.makeText(this, "Minimum frequency allowed: 10", Toast.LENGTH_LONG).show();
+			freq_text.setText("10");
+			curFreq = 10;
+		}
+	}
+	
 	private void playTone(){
 		int ATBufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_CONFIGURATION_MONO, AudioFormat.ENCODING_PCM_16BIT);
 		audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate, 
 				 AudioFormat.CHANNEL_CONFIGURATION_MONO, 
 				 AudioFormat.ENCODING_PCM_16BIT, ATBufferSize,
 				 AudioTrack.MODE_STREAM);
-		
 		genTone();
 		Thread t = new Thread(this);
 		t.start();
-
 	}
 	
 	private void stopTone(){
