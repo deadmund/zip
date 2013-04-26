@@ -26,6 +26,7 @@
         <activity android:name=".Freestyle" 
             android:screenOrientation="portrait"/>
         <activity android:name=".Tuner" />
+        <activity android:name=".zipPreferences"/>
     </application>
 
 </manifest>

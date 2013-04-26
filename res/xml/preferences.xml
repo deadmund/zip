@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+     
+    <PreferenceCategory android:title="@string/freestyle" >
+        <EditTextPreference
+            android:defaultValue="100"
+            android:key="free_tone_min"
+            android:title="Tone Minimum"
+            android:summary="Minimum Tone (bottom of the screen) in Hz"
+            android:inputType="number"
+            android:numeric="integer"
+            android:maxLength="4" />
+        
+        <EditTextPreference
+            android:defaultValue="900"
+            android:key="free_tone_max"
+            android:title="Tone Maximum"
+            android:summary="Maximum Tone (top of the screen) in Hz"
+            android:inputType="number"
+            android:numeric="integer"
+            android:maxLength="4" />
+        
+        <EditTextPreference
+            android:defaultValue="10"
+            android:key="free_ball_min"
+            android:title="Circle Minimum"
+            android:summary="Minimum Circle Radius (top of the screen)"
+            android:inputType="number"
+            android:numeric="integer"
+            android:maxLength="3" />
+        
+        <EditTextPreference
+            android:defaultValue="300"
+            android:key="free_ball_max"
+            android:title="Circle Maximum"
+            android:summary="Maximum Circle Radius (bottom of the screen)"
+            android:inputType="number"
+            android:numeric="integer"
+            android:maxLength="3" />
+    </PreferenceCategory>
+ 
+</PreferenceScreen>
