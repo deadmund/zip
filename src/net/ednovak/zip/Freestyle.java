@@ -2,6 +2,7 @@ package net.ednovak.zip;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,6 +10,7 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -27,6 +29,13 @@ public class Freestyle extends Activity implements Runnable{
 	private int ATBufferSize;
 	private byte[] myBuffer;
 	
+	private SharedPreferences SP;
+	private int ballMin;
+	private int ballMax;
+	private int toneMin;
+	private int toneMax;
+
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -41,6 +50,12 @@ public class Freestyle extends Activity implements Runnable{
 				 AudioFormat.CHANNEL_CONFIGURATION_MONO, 
 				 AudioFormat.ENCODING_PCM_16BIT, ATBufferSize,
 				 AudioTrack.MODE_STREAM);
+		
+		SP  = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		ballMin = Integer.valueOf(SP.getString("free_ball_min", "20"));
+		ballMax = Integer.valueOf(SP.getString("free_ball_max", "300"));
+		toneMin = Integer.valueOf(SP.getString("free_tone_min", "20"));
+		toneMax = Integer.valueOf(SP.getString("free_tone_max", "700"));
 		
 		changeTone(100, 200);
 
@@ -61,7 +76,7 @@ public class Freestyle extends Activity implements Runnable{
 	
 	protected void changeTone(double y, double max){
 		// first number + (percentage of X)  hz range of [firstnumber, firstnumber+lastNumber]
-		curFreq = 100 + ((y / max) * 700); 
+		curFreq = toneMin + ((y / max) * toneMax); 
 		
 		int length = (int) (Math.round(sampleRate / curFreq) + 1);
 		myBuffer = new byte[length*2];
@@ -127,7 +142,7 @@ public class Freestyle extends Activity implements Runnable{
 			int blue =(int) (Math.sin(freq*e.getX() + 4) * 127) + 128;
 
 			c.drawColor(Color.rgb(red, green, blue));
-			float rad = (float) ( 20 + ((e.getY() / c.getHeight()) * c.getWidth()/2) );
+			float rad = (float) ( ballMin + ((e.getY() / c.getHeight()) * ballMax) );
 			c.drawCircle(e.getX(), e.getY(), rad, p);
 		}
 		
