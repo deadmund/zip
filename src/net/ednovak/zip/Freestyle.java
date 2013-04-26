@@ -53,9 +53,9 @@ public class Freestyle extends Activity implements Runnable{
 		
 		SP  = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		ballMin = Integer.valueOf(SP.getString("free_ball_min", "20"));
-		ballMax = Integer.valueOf(SP.getString("free_ball_max", "300"));
-		toneMin = Integer.valueOf(SP.getString("free_tone_min", "20"));
-		toneMax = Integer.valueOf(SP.getString("free_tone_max", "700"));
+		ballMax = Integer.valueOf(SP.getString("free_ball_max", "100"));
+		toneMin = Integer.valueOf(SP.getString("free_tone_min", "100"));
+		toneMax = Integer.valueOf(SP.getString("free_tone_max", "900"));
 		
 		changeTone(100, 200);
 

@@ -1,43 +1,50 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-	android:gravity="center"
-    android:orientation="vertical" 
-    android:background="@drawable/gradient" >
-
-    <TextView android:id="@+id/zip_text"
-        android:textSize="30sp"
-        android:textColor="#FFFFFF"
-        android:shadowColor="#ff000000"
-        android:shadowRadius="10"
-        android:shadowDx="10"
-        android:shadowDy="10"
+    android:background="@drawable/gradient"
+    android:gravity='center_horizontal'
+    android:orientation="vertical" >
+    
+    <ImageView
+	    android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignLeft="@+id/tuner"
-    	android:layout_alignRight="@+id/freestyle"
-    	android:gravity="center"
-    	android:layout_marginBottom="100dp"
-    	android:padding="20dp"
+	    android:contentDescription="@string/app_name"
+	    android:src="@drawable/zip_icon" />
+    
+    <TextView
+        android:id="@+id/zip_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="15dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:shadowColor="#ff000000"
+        android:shadowDy="10"
+        android:shadowRadius="10"
         android:text="@string/hello_world"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
         tools:context=".ZipMenu" />
-    
-    <Button android:id="@+id/tuner"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/zip_text"
-        android:layout_centerInParent="true"
-        android:text="@string/tuner" />
-    
 
-    <Button android:id="@+id/freestyle"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/zip_text"
-        android:layout_centerInParent="true"
-        android:layout_toRightOf="@id/tuner"
-        android:text="@string/freestyle" />
+    <LinearLayout
+         android:layout_width="match_parent"
+    	 android:layout_height="wrap_content"
+    	 android:orientation="horizontal"
+    	 android:gravity="center_horizontal">
+    
+	    <Button
+	        android:id="@+id/tuner"
+	        android:layout_width="100dp"
+	        android:layout_height="wrap_content"
+	        android:text="@string/tuner" />
+	
+	    <Button
+	        android:id="@+id/freestyle"
+	        android:layout_width="100dp"
+	        android:layout_height="wrap_content"
+	        android:text="@string/freestyle" />
+	    </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>
