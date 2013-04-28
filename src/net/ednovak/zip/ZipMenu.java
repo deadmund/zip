@@ -30,7 +30,6 @@ public class ZipMenu extends Activity {
         	}
         });
         
-        //getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
