@@ -18,9 +18,7 @@ import android.widget.ToggleButton;
 
 public class Tuner extends Activity implements Runnable{
 	
-	private Spinner notes_spin;
 	private EditText freq_text;
-	private ToggleButton play_butt;
 	private final int sampleRate = 8000;
 	private double curFreq;
 	private boolean playing = false;
@@ -31,8 +29,9 @@ public class Tuner extends Activity implements Runnable{
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tuner_layout);
-		
-		notes_spin = (Spinner) findViewById(R.id.note);
+
+		// Set up the spinner to choose notes (musical notes)
+		final Spinner notes_spin = (Spinner) findViewById(R.id.note);
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.notes_array, android.R.layout.simple_spinner_item);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		notes_spin.setAdapter(adapter);
@@ -50,15 +49,16 @@ public class Tuner extends Activity implements Runnable{
 			}
 		});
 		
+		// The frequency text box
 		freq_text = (EditText)findViewById(R.id.freq);
 		Log.d("tuner:onCreate", "Just testing");
 		
-		play_butt = (ToggleButton) findViewById(R.id.play_stop);
+		// Play button
+		final ToggleButton play_butt = (ToggleButton) findViewById(R.id.play_stop);
 		play_butt.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v){
 				if (playing){
-					playing = false;
 					stopTone();
 				}
 				else{
@@ -67,9 +67,9 @@ public class Tuner extends Activity implements Runnable{
 					}
 					catch(NumberFormatException e){
 						e.printStackTrace();
+						curFreq = 440;
 					}
 					checkFreq();
-					playing = true;
 					playTone();
 				}
 			}
@@ -95,6 +95,11 @@ public class Tuner extends Activity implements Runnable{
 	}
 	
 	
+	// This function translates from the string note name to a
+	// string frequency.
+	// I had to use if statements and not a switch because the java switch only
+	// supports ints (which is stupid).  It returns a string because it actually 
+	// is used to write the value into the edittext
 	private String resolveNote(String note){
 		 String freq = "0";
 		 if (note.equals("A")){
@@ -122,6 +127,7 @@ public class Tuner extends Activity implements Runnable{
 	}
 	
 	
+	// Makes sure the frequency input is acceptable
 	private void checkFreq(){
 		double maxFreq = (double)sampleRate / 2.0;
 		if (curFreq > maxFreq){
@@ -129,27 +135,32 @@ public class Tuner extends Activity implements Runnable{
 			freq_text.setText("440");
 			curFreq = 440;
 		}
-		if(curFreq < 10){
-			Toast.makeText(this, "Minimum frequency allowed: 10", Toast.LENGTH_LONG).show();
-			freq_text.setText("10");
-			curFreq = 10;
+		if(curFreq < 20){
+			Toast.makeText(this, "Minimum frequency allowed: 20", Toast.LENGTH_LONG).show();
+			freq_text.setText("20");
+			curFreq = 20;
 		}
 	}
 	
+	
 	private void playTone(){
-		int ATBufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_CONFIGURATION_MONO, AudioFormat.ENCODING_PCM_16BIT);
+		playing = true;
+		final int ATBufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_CONFIGURATION_MONO, AudioFormat.ENCODING_PCM_16BIT);
 		audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate, 
 				 AudioFormat.CHANNEL_CONFIGURATION_MONO, 
 				 AudioFormat.ENCODING_PCM_16BIT, ATBufferSize,
 				 AudioTrack.MODE_STREAM);
+		// I am using a streaming mode audiotrack because I do not know the duration of the tone needed
 		genTone();
 		Thread t = new Thread(this);
 		t.start();
 	}
 	
 	private void stopTone(){
+		playing = false;
 		audioTrack.pause();
 		audioTrack.flush();
+		// Actually, pause and flush is enough but I wanna be thorough
 		audioTrack.stop();
 		audioTrack.release();
 	}

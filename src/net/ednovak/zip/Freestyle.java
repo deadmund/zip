@@ -20,16 +20,13 @@ import android.view.WindowManager;
 
 public class Freestyle extends Activity implements Runnable{
 	
-	private Thread t;
 	private ZipSurfaceView SV;
 	private double curFreq = 400;
 	private AudioTrack audioTrack;
 	private final int sampleRate = 8000;
 	private boolean fingerDown;
-	private int ATBufferSize;
 	private byte[] myBuffer;
 	
-	private SharedPreferences SP;
 	private int ballMin;
 	private int ballMax;
 	private int toneMin;
@@ -44,19 +41,23 @@ public class Freestyle extends Activity implements Runnable{
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(SV);
 		
-		ATBufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_CONFIGURATION_MONO, AudioFormat.ENCODING_PCM_16BIT);
+		final int ATBufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_CONFIGURATION_MONO, AudioFormat.ENCODING_PCM_16BIT);
 		Log.d("Freestyle:onCreate", "bufferSize: " + ATBufferSize);
 		audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate, 
 				 AudioFormat.CHANNEL_CONFIGURATION_MONO, 
 				 AudioFormat.ENCODING_PCM_16BIT, ATBufferSize,
 				 AudioTrack.MODE_STREAM);
+		// I'm using a streaming mode audiotrack because of the dynamic tone changing
+		// and because I don't know the duration (or even the future) of the tone
 		
-		SP  = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		// I pull these out here because they cannot be change outside of this app
+		final SharedPreferences SP  = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		ballMin = Integer.valueOf(SP.getString("free_ball_min", "20"));
 		ballMax = Integer.valueOf(SP.getString("free_ball_max", "100"));
 		toneMin = Integer.valueOf(SP.getString("free_tone_min", "100"));
 		toneMax = Integer.valueOf(SP.getString("free_tone_max", "900"));
 		
+		// Set an initial tone simlpy
 		changeTone(100, 200);
 
 	}
@@ -78,6 +79,9 @@ public class Freestyle extends Activity implements Runnable{
 		// first number + (percentage of X)  hz range of [firstnumber, firstnumber+lastNumber]
 		curFreq = toneMin + ((y / max) * toneMax); 
 		
+		// I set the buffer to this length so it fits the length of the wave exactly twice.
+		// This means the wave starts and ends at 0 which removes the clicking noise that
+		// arises between two waves
 		int length = (int) (Math.round(sampleRate / curFreq) + 1);
 		myBuffer = new byte[length*2];
 
@@ -90,7 +94,7 @@ public class Freestyle extends Activity implements Runnable{
 	}
 	
 	private void startSoundThread(){
-		t = new Thread(this);
+		Thread t = new Thread(this);
 		t.start();
 	}
 	
@@ -98,6 +102,8 @@ public class Freestyle extends Activity implements Runnable{
 		audioTrack.pause();
 		audioTrack.flush();
 		audioTrack.stop();
+		// don't release the audio track because the user might
+		// rapidly stop generating and then start generating sound
 	}
 	
 	
@@ -125,6 +131,7 @@ public class Freestyle extends Activity implements Runnable{
 			p.setColor(Color.BLACK);
 		}
 		
+		// Maybe this should be removed?  IDK
 		public void onResumeSV(){
 
 		}
@@ -136,6 +143,7 @@ public class Freestyle extends Activity implements Runnable{
 		
 		protected void reDraw(Canvas c, MotionEvent e){
 			
+			// I need to come up with a better way to set the frequency!
 			double freq = .02;
 			int red =(int) (Math.sin(freq*e.getX() + 0) * 127) + 128;
 			int green =(int) (Math.sin(freq*e.getX() + 2) * 127) + 128;
@@ -146,13 +154,16 @@ public class Freestyle extends Activity implements Runnable{
 			c.drawCircle(e.getX(), e.getY(), rad, p);
 		}
 		
+		// This function is necessary to be a surfaceView but I dont' need it
 		public void surfaceDestroyed(SurfaceHolder surfaceHolder){
 			
 		}
 		
+		// This function is necessary to be a surfaceview but I don't need it
 		public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
-			Log.d("ZipSurfaceView:surfaceChange", "the surface changed for some reason?");
+			//Log.d("ZipSurfaceView:surfaceChange", "the surface changed for some reason?");
 		}
+		
 		
 		public void surfaceCreated(SurfaceHolder holder){
 			surfaceHolder = holder;
