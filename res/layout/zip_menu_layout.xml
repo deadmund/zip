@@ -10,7 +10,7 @@
 	    android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-	    android:contentDescription="@string/app_name"
+	    android:contentDescription="@string/Zip"
 	    android:src="@drawable/zip_icon" />
     
     <TextView
@@ -23,7 +23,7 @@
         android:shadowColor="#ff000000"
         android:shadowDy="10"
         android:shadowRadius="10"
-        android:text="@string/hello_world"
+        android:text="@string/Zip"
         android:textColor="#FFFFFF"
         android:textSize="30sp"
         tools:context=".ZipMenu" />
@@ -35,16 +35,16 @@
     	 android:gravity="center_horizontal">
     
 	    <Button
-	        android:id="@+id/tuner"
+	        android:id="@+id/settings"
 	        android:layout_width="100dp"
 	        android:layout_height="wrap_content"
-	        android:text="@string/tuner" />
+	        android:text="@string/settings" />
 	
 	    <Button
 	        android:id="@+id/freestyle"
 	        android:layout_width="100dp"
 	        android:layout_height="wrap_content"
-	        android:text="@string/freestyle" />
+	        android:text="@string/Zip" />
 	    </LinearLayout>
 
 </LinearLayout>

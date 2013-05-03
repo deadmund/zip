@@ -1,22 +1,9 @@
 <resources>
 
-    <string name="app_name">zip</string>
-    <string name="hello_world">Zip!</string>
-    <string name="menu_settings">Settings</string>
+    <string name="zip">zip</string>
+    <string name="Zip">Zip!</string>
     <string name="title_activity_zip_menu">Zip</string>
     <string name="freestyle">Freestyle</string>
-    <string name="tuner">Tuner</string>
-    <string-array name="notes_array">
-        <item>A</item>
-        <item>B</item>
-        <item>C</item>
-        <item>D</item>
-        <item>E</item>
-        <item>F</item>
-        <item>G</item>
-    </string-array>
-    <string name="stop">Stop</string>
-    <string name="play">Play</string>
-    <string name="hz">Hz</string>
+    <string name="settings">Settings</string>
 
 </resources>

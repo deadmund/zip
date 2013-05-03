@@ -11,6 +11,7 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -77,8 +78,8 @@ public class Freestyle extends Activity implements Runnable{
 	
 	protected void changeTone(double y, double max){
 		// first number + (percentage of X)  hz range of [firstnumber, firstnumber+lastNumber]
-		curFreq = toneMin + ((y / max) * toneMax); 
-		
+		curFreq = toneMin + (y / max) * (toneMax - toneMin);
+		Log.d("Freestyle:changeTone", "tone: " + curFreq);
 		// I set the buffer to this length so it fits the length of the wave exactly twice.
 		// This means the wave starts and ends at 0 which removes the clicking noise that
 		// arises between two waves
@@ -150,7 +151,7 @@ public class Freestyle extends Activity implements Runnable{
 			int blue =(int) (Math.sin(freq*e.getX() + 4) * 127) + 128;
 
 			c.drawColor(Color.rgb(red, green, blue));
-			float rad = (float) ( ballMin + ((e.getY() / c.getHeight()) * ballMax) );
+			float rad = (float) ( ballMin + ((e.getY() / c.getHeight()) * (ballMax - ballMin)) );
 			c.drawCircle(e.getX(), e.getY(), rad, p);
 		}
 		
@@ -173,15 +174,12 @@ public class Freestyle extends Activity implements Runnable{
 		public boolean onTouchEvent(MotionEvent event){
 			//Log.d("zipSurfaceView:onTouch", "touched!");
 			
-			if (event.getAction() == MotionEvent.ACTION_DOWN){
+			if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN){ // First finger down
 				fingerDown = true;
 				startSoundThread();
-				Log.d("Freestyle:onTouchEvent", "Recorded action down");
-				
-			
 			}
-			if (event.getAction() == MotionEvent.ACTION_UP){
-				Log.d("Freestyle:onTouchEvent", "Recorded action up");
+			
+			if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_UP){ // Last finger up
 				fingerDown = false;
 				stopSoundThread();
 			}
@@ -194,8 +192,6 @@ public class Freestyle extends Activity implements Runnable{
 			changeTone(c.getHeight() - event.getY(), c.getWidth());
 			reDraw(c, event);
 			surfaceHolder.unlockCanvasAndPost(c);
-			
-
 			
 			return true;
 			//return super.onTouchEvent(event);

@@ -3,8 +3,6 @@ package net.ednovak.zip;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -23,32 +21,12 @@ public class ZipMenu extends Activity {
         	}
         });
         
-        Button tuner_butt = (Button) findViewById(R.id.tuner);
+        Button tuner_butt = (Button) findViewById(R.id.settings);
         tuner_butt.setOnClickListener(new OnClickListener() {
         	public void onClick(View v){
-        		startActivity(new Intent(v.getContext(), Tuner.class));
+        		startActivity(new Intent(v.getContext(), zipPreferences.class));
         	}
         });
         
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.zip_menu_layout, menu);
-        return true;
-    }
-    
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_settings:
-            	startActivity(new Intent(this, zipPreferences.class));
-                //NavUtils.navigateUpFromSameTask(this);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-    
-
 }
