@@ -1,5 +1,7 @@
 package net.ednovak.zip;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -22,16 +24,18 @@ import android.view.WindowManager;
 public class Freestyle extends Activity implements Runnable{
 	
 	private ZipSurfaceView SV;
-	private double curFreq = 400;
 	private AudioTrack audioTrack;
 	private final int sampleRate = 8000;
 	private boolean fingerDown;
-	private byte[] myBuffer;
+	private byte[] myBuffer = new byte[1024]; // This is an arbitrary length
+	final private float[] pointers = new float[3];
+	private float canvasHeight;
 	
 	private int ballMin;
 	private int ballMax;
 	private int toneMin;
 	private int toneMax;
+	
 
 	
 	@Override
@@ -43,7 +47,7 @@ public class Freestyle extends Activity implements Runnable{
 		setContentView(SV);
 		
 		final int ATBufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_CONFIGURATION_MONO, AudioFormat.ENCODING_PCM_16BIT);
-		Log.d("Freestyle:onCreate", "bufferSize: " + ATBufferSize);
+		//Log.d("Freestyle:onCreate", "bufferSize: " + ATBufferSize);
 		audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate, 
 				 AudioFormat.CHANNEL_CONFIGURATION_MONO, 
 				 AudioFormat.ENCODING_PCM_16BIT, ATBufferSize,
@@ -57,9 +61,6 @@ public class Freestyle extends Activity implements Runnable{
 		ballMax = Integer.valueOf(SP.getString("free_ball_max", "100"));
 		toneMin = Integer.valueOf(SP.getString("free_tone_min", "100"));
 		toneMax = Integer.valueOf(SP.getString("free_tone_max", "900"));
-		
-		// Set an initial tone simlpy
-		changeTone(100, 200);
 
 	}
 	
@@ -73,22 +74,57 @@ public class Freestyle extends Activity implements Runnable{
 	protected void onPause(){
 		super.onPause();
 		SV.onPauseSV();
+		fingerDown = false;
+		stopSoundThread();
 	}
 	
 	
-	protected void changeTone(double y, double max){
-		// first number + (percentage of X)  hz range of [firstnumber, firstnumber+lastNumber]
-		curFreq = toneMin + (y / max) * (toneMax - toneMin);
-		Log.d("Freestyle:changeTone", "tone: " + curFreq);
-		// I set the buffer to this length so it fits the length of the wave exactly twice.
-		// This means the wave starts and ends at 0 which removes the clicking noise that
-		// arises between two waves
-		int length = (int) (Math.round(sampleRate / curFreq) + 1);
+	
+	protected float getFreq(float y){
+		y = canvasHeight - y;
+		return (toneMin + (y / canvasHeight) * (toneMax - toneMin));
+	}
+	
+	
+	
+	// Sad that I have to write this function
+	protected double getMax(double[] input){
+		double max = Double.NEGATIVE_INFINITY;
+		for(int i = 0; i < input.length; i++){
+			if (input[i] > max){
+				max = input[i];
+			}
+		}
+		return max;
+	}
+	
+	
+	// Combine all the tones together, it might be better to sometimes remove
+	// tones than always rebuild the entire waveform
+	protected void reBuildTone(){
+		
+		// Collect all  the samples together in tmp (doubles)
+		double l = sampleRate / pointers[0];
+		for (int i = 1; i < pointers.length; i++){
+			if (pointers[i] != 0.0){
+				l = l * sampleRate/getFreq(pointers[i]);
+			}
+		}
+		Log.d("main:reBuildTone", "length : "+ l);
+		int length = (int) (Math.round(l) + 1);
 		myBuffer = new byte[length*2];
-
-		for(int i = 0; i < length; i++){
-			double val = sampleSin(i);
-			short sVal = (short)(val * (Short.MAX_VALUE));
+		double[] tmp = new double[length];
+		for(int i = 0; i < pointers.length; i++){
+			double freq = getFreq(pointers[i]);
+			for(int j = 0; j < tmp.length; j++){
+				tmp[j] += sampleSin(j, freq);
+			}
+		}
+		
+		// Convert to PCM and normalize all in one step, place in myBuffer
+		double max = getMax(tmp);
+		for(int i = 0; i < tmp.length; i++){
+			short sVal = (short)(tmp[i]/max * Short.MAX_VALUE ); 
 			myBuffer[i*2] = (byte) (sVal & 0x00ff);
 			myBuffer[i*2 + 1] = (byte) ((sVal & 0xff00) >>> 8);
 		}
@@ -108,8 +144,8 @@ public class Freestyle extends Activity implements Runnable{
 	}
 	
 	
-	private double sampleSin(int index){
-		return Math.sin( 2 * Math.PI * index * (curFreq/sampleRate));
+	private double sampleSin(int index, double freq){
+		return Math.sin( 2 * Math.PI * index * (freq/sampleRate));
 	}
 	
 	@Override
@@ -174,29 +210,58 @@ public class Freestyle extends Activity implements Runnable{
 		public boolean onTouchEvent(MotionEvent event){
 			//Log.d("zipSurfaceView:onTouch", "touched!");
 			
-			if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN){ // First finger down
-				fingerDown = true;
-				startSoundThread();
-			}
-			
-			if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_UP){ // Last finger up
-				fingerDown = false;
-				stopSoundThread();
-			}
-			
-			
+			// Get the canvas
 			Canvas c = null;
 			while (c == null){
 				c = surfaceHolder.lockCanvas();
 			}
-			changeTone(c.getHeight() - event.getY(), c.getWidth());
+			canvasHeight = c.getHeight();
+			
+			// Get the "Action Event"
+			int action = MotionEventCompat.getActionMasked(event);
+			int index = MotionEventCompat.getActionIndex(event);
+			float y = MotionEventCompat.getY(event, index);
+			float x = MotionEventCompat.getX(event, index);
+			int id = MotionEventCompat.getPointerId(event, index);
+			
+			switch (action){
+			case MotionEvent.ACTION_DOWN: // First finger down
+				pointers[0] = y;
+				fingerDown = true;
+				startSoundThread();
+				break;
+				
+			case MotionEvent.ACTION_POINTER_DOWN: // Another finger down				
+				pointers[id] = y;
+				break;
+				
+			case MotionEvent.ACTION_POINTER_UP:
+				pointers[id] = 0.0f;
+				break;
+				
+			case MotionEvent.ACTION_MOVE: // Change in frequency(ies)
+				pointers[id] = y;
+				break;
+				
+			case MotionEvent.ACTION_UP:
+				fingerDown = false;
+				stopSoundThread();
+				pointers[0] = 0.0f;
+				pointers[1] = 0.0f;
+				pointers[2] = 0.0f;
+				break;
+			}
+			
+			for(int i = 0; i < pointers.length; i++){
+				Log.d("freestyle:onTouchEvent", "pointers[i]: " + pointers[i]);
+			}
+			
+			reBuildTone();
 			reDraw(c, event);
 			surfaceHolder.unlockCanvasAndPost(c);
 			
 			return true;
 			//return super.onTouchEvent(event);
 		}
-		
-		
 	}
 }
